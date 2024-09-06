@@ -1,3 +1,11 @@
-// Entry point for the build script in your package.json
-import "@hotwired/turbo-rails"
-import "./controllers"
+import React from "react";
+import ReactDOM from "react-dom/client";
+import TaskList from "./components/TaskList.jsx";
+
+document.addEventListener("DOMContentLoaded", () => {
+  const element = document.getElementById("task-list");
+  if (element) {
+    const root = ReactDOM.createRoot(element);
+    root.render(<TaskList />);
+  }
+});
