@@ -84,6 +84,23 @@ function TaskList() {
       .catch((error) => console.error("Error deleting task:", error));
   }
 
+  function toggleCompleteTask(task) {
+    const csrfToken = document.querySelector("[name=csrf-token]").content;
+
+    fetch(`/tasks/${task.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrfToken,
+      },
+      body: JSON.stringify({ task: { completed: !task.completed } }),
+    })
+      .then((response) => response.json())
+      .then((updatedTask) => {
+        setTasks(tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)));
+      });
+  }
+
   return (
     <div className="container mt-5">
       <h1 className="text-center">Task List</h1>
@@ -115,6 +132,16 @@ function TaskList() {
 
           return (
             <li key={ task.id } className="list-group-item d-flex justify-content-between align-items-center">
+
+              <div className="d-flex">
+                <input
+                  type="checkbox"
+                  className="me-2 custom-checkbox"
+                  checked={ task.completed }
+                  onChange={ () => toggleCompleteTask(task) }
+                  disabled={ isEditing }
+                />
+              </div>
 
               <div className="d-flex align-items-center flex-grow-1">
                 { isEditing ? (
