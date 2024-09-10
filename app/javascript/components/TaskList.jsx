@@ -29,6 +29,21 @@ function TaskList() {
       });
   }
 
+  function handleDeleteTask(taskId) {
+    const csrfToken = document.querySelector("[name=csrf-token]").content;
+
+    fetch(`/tasks/${taskId}`, {
+      method: "DELETE",
+      headers: {
+        "X-CSRF-Token": csrfToken,
+      },
+    })
+      .then(() => {
+        setTasks(tasks.filter((task) => task.id !== taskId));
+      })
+      .catch((error) => console.error("Error deleting task:", error));
+  }
+
   return (
     <div className="container mt-5">
       <h1 className="text-center">Task List</h1>
@@ -54,6 +69,11 @@ function TaskList() {
             <div className="d-flex align-items-center flex-grow-1">
               <span>{ task.title }</span>
             </div>
+            <button
+              className="btn btn-dangerbtn btn-danger btn-sm fixed-width"
+              onClick={ () => handleDeleteTask(task.id) }>
+              Delete
+            </button>
           </li>
         ))}
       </ul>
