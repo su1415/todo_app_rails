@@ -5,6 +5,8 @@ function TaskList() {
   const [editTask, setEditTask] = useState(null);
   const [addTitle, setAddTitle] = useState("");
   const [editTitle, setEditTitle] = useState("");
+  const [addDueDate, setAddDueDate] = useState("");
+  const [editDueDate, setEditDueDate] = useState("");
 
   useEffect(() => {
     fetch("/tasks")
@@ -22,23 +24,26 @@ function TaskList() {
         "Content-Type": "application/json",
         "X-CSRF-Token": csrfToken,
       },
-      body: JSON.stringify({ task: { title: addTitle } }),
+      body: JSON.stringify({ task: { title: addTitle, due_date: addDueDate } }),
     })
       .then((response) => response.json())
       .then((newTask) => {
         setTasks([...tasks, newTask]);
         setAddTitle("");
+        setAddDueDate("");
       });
   }
 
   function handleEditTask(task) {
     setEditTask(task);
     setEditTitle(task.title);
+    setEditDueDate(task.due_date);
   }
 
   function handleCancelTask() {
     setEditTask(null);
     setEditTitle("");
+    setEditDueDate("");
   }
 
   function handleUpdateTask(e) {
@@ -51,7 +56,7 @@ function TaskList() {
         "Content-Type": "application/json",
         "X-CSRF-Token": csrfToken,
       },
-      body: JSON.stringify({ task: { title: editTitle } }),
+      body: JSON.stringify({ task: { title: editTitle, due_date: editDueDate } }),
     })
       .then((response) => response.json())
       .then((updatedTask) => {
@@ -60,6 +65,7 @@ function TaskList() {
         );
         setEditTask(null);
         setEditTitle("");
+        setEditDueDate("");
       });
   }
 
@@ -90,6 +96,12 @@ function TaskList() {
           value={ addTitle }
           onChange={ (e) => setAddTitle(e.target.value) }
         />
+        <input
+          type="date"
+          className="form-control"
+          value={ addDueDate }
+          onChange={ (e) => setAddDueDate(e.target.value) }
+        />
         <button
           className="btn btn-primary"
           onClick={ handleAddTask }>
@@ -98,62 +110,76 @@ function TaskList() {
       </div>
 
       <ul className="list-group">
-        { tasks.map((task) => (
-          <li key={ task.id } className="list-group-item d-flex justify-content-between align-items-center">
+        { tasks.map((task) => {
+          const isEditing = editTask && editTask.id === task.id;
 
-            <div className="d-flex align-items-center flex-grow-1">
-              { editTask && editTask.id === task.id ? (
-                  <>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={ editTitle }
-                      onChange={ (e) => setEditTitle(e.target.value) }
-                    />
-                  </>
-                ) : (
-                  <>
-                    <div className="d-flex align-items-center flex-grow-1">
-                      <span>{ task.title }</span>
-                    </div>
-                  </>
-                )
-              }
-            </div>
+          return (
+            <li key={ task.id } className="list-group-item d-flex justify-content-between align-items-center">
 
-            <div className="d-flex align-items-center">
-              { editTask && editTask.id === task.id ? (
-                  <>
-                    <button
-                      className="btn btn-success btn-sm me-2 fixed-width"
-                      onClick={ handleUpdateTask }>
-                      Save
-                    </button>
-                    <button
-                      className="btn btn-secondary btn-sm fixed-width"
-                      onClick={ handleCancelTask }>
-                      Cancel
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      className="btn btn-warning btn-sm me-2 fixed-width"
-                      onClick={ () => handleEditTask(task) }>
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-dangerbtn btn-danger btn-sm fixed-width"
-                      onClick={ () => handleDeleteTask(task.id) }>
-                      Delete
-                    </button>
-                  </>
-                )
-              }
-            </div>
+              <div className="d-flex align-items-center flex-grow-1">
+                { isEditing ? (
+                    <>
+                      <input
+                        type="text"
+                        className="form-control me-2 flex-grow-1"
+                        value={ editTitle }
+                        onChange={ (e) => setEditTitle(e.target.value) }
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <div className="d-flex align-items-center flex-grow-1">
+                        <span>{ task.title }</span>
+                      </div>
+                    </>
+                  )
+                }
+              </div>
 
-          </li>
-        ))}
+              <div className="d-flex">
+                <input
+                  type="date"
+                  className="form-control due-date"
+                  value={ isEditing ? editDueDate : task.due_date }
+                  onChange={ (e) => setEditDueDate(e.target.value) }
+                  disabled={ !isEditing }
+                />
+              </div>
+
+              <div className="d-flex align-items-center">
+                { isEditing ? (
+                    <>
+                      <button
+                        className="btn btn-success btn-sm me-2 fixed-width"
+                        onClick={ handleUpdateTask }>
+                        Save
+                      </button>
+                      <button
+                        className="btn btn-secondary btn-sm fixed-width"
+                        onClick={ handleCancelTask }>
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className="btn btn-warning btn-sm me-2 fixed-width"
+                        onClick={ () => handleEditTask(task) }>
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-dangerbtn btn-danger btn-sm fixed-width"
+                        onClick={ () => handleDeleteTask(task.id) }>
+                        Delete
+                      </button>
+                    </>
+                  )
+                }
+              </div>
+
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

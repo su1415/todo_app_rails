@@ -7,3 +7,7 @@
 .fixed-width {
   min-width: 70px;
 }
+
+.due-date {
+  margin-right: 0.5rem;
+}
