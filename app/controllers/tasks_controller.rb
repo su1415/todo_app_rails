@@ -12,6 +12,14 @@ class TasksController < ApplicationController
     render json: task, status: :created
   end
 
+  def update
+    task = Task.find(params[:id])
+    unless task.update(task_params)
+      return render json: task.errors, status: unprocessable_entity
+    end
+    render json: task
+  end
+
   def destroy
     task = Task.find(params[:id])
     task.destroy

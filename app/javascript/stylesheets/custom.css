@@ -1,0 +1,9 @@
+
+.list-group-item {
+  display: flex;
+  align-items: center;
+}
+
+.fixed-width {
+  min-width: 70px;
+}
