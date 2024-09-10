@@ -379,15 +379,8 @@ http://localhost:3000 にアクセスして確認
 ### 再起動
 
 ```
+$ rm app/assets/builds/application.*
 $ rails tmp:cache:clear
 $ rails assets:precompile
 $ rails server
-```
-
-プリコンパイルでエラーが出る場合は以下のファイルを削除してから再度実施
-```
-app\assets\builds\application.js
-app\assets\builds\application.css
-app\assets\builds\application.js.map
-app\assets\builds\application.css.map
 ```
