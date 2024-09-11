@@ -1,6 +1,6 @@
 class TasksController < ApplicationController
   def index
-    tasks = Task.order(:due_date)
+    tasks = Task.order_by_due_date
     render json: tasks
   end
 
@@ -9,15 +9,17 @@ class TasksController < ApplicationController
     unless task.save
       return render json: task.errors, status: :unprocessable_entity
     end
-    render json: task, status: :created
+    tasks = Task.order_by_due_date
+    render json: tasks, status: :created
   end
 
   def update
     task = Task.find(params[:id])
     unless task.update(task_params)
-      return render json: task.errors, status: unprocessable_entity
+      return render json: task.errors, status: :unprocessable_entity
     end
-    render json: task
+    tasks = Task.order_by_due_date
+    render json: tasks
   end
 
   def destroy

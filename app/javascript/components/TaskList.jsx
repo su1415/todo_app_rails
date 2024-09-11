@@ -27,12 +27,7 @@ function TaskList() {
       body: JSON.stringify({ task: { title: addTitle, due_date: addDueDate } }),
     })
       .then((response) => response.json())
-      .then((newTask) => {
-        const updatedTasks = [...tasks, newTask].sort((a, b) => {
-          if (!a.due_date) return 1;
-          if (!b.due_date) return -1;
-          return new Date(a.due_date) - new Date(b.due_date);
-        });
+      .then((updatedTasks) => {
         setTasks(updatedTasks);
         setAddTitle("");
         setAddDueDate("");
@@ -64,12 +59,7 @@ function TaskList() {
       body: JSON.stringify({ task: { title: editTitle, due_date: editDueDate } }),
     })
       .then((response) => response.json())
-      .then((updatedTask) => {
-        const updatedTasks = tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)).sort((a, b) => {
-          if (!a.due_date) return 1;
-          if (!b.due_date) return -1;
-          return new Date(a.due_date) - new Date(b.due_date);
-        });
+      .then((updatedTasks) => {
         setTasks(updatedTasks);
         setEditTask(null);
         setEditTitle("");
