@@ -6,8 +6,7 @@ function TaskList() {
   const [tasks, setTasks] = useState([]);
   const [editTask, setEditTask] = useState(null);
   const [addTaskData, setAddTaskData] = useState({ title: "", dueDate: "" });
-  const [editTitle, setEditTitle] = useState("");
-  const [editDueDate, setEditDueDate] = useState("");
+  const [editTaskData, setEditTaskData] = useState({ title: "", dueDate: "" });
   const csrfToken = document.querySelector("[name=csrf-token]").content;
 
   useEffect(() => {
@@ -35,14 +34,12 @@ function TaskList() {
 
   function handleEditTask(task) {
     setEditTask(task);
-    setEditTitle(task.title);
-    setEditDueDate(task.due_date);
+    setEditTaskData({ title: task.title, dueDate: task.due_date });
   }
 
   function handleCancelTask() {
     setEditTask(null);
-    setEditTitle("");
-    setEditDueDate("");
+    setEditTaskData({ title: "", dueDate: "" });
   }
 
   function handleUpdateTask(e) {
@@ -53,14 +50,13 @@ function TaskList() {
         "Content-Type": "application/json",
         "X-CSRF-Token": csrfToken,
       },
-      body: JSON.stringify({ task: { title: editTitle, due_date: editDueDate } }),
+      body: JSON.stringify({ task: { title: editTaskData.title, due_date: editTaskData.dueDate } }),
     })
       .then((response) => response.json())
       .then((updatedTasks) => {
         setTasks(updatedTasks);
         setEditTask(null);
-        setEditTitle("");
-        setEditDueDate("");
+        setEditTaskData({ title: "", dueDate: "" });
       });
   }
 
@@ -111,12 +107,8 @@ function TaskList() {
               key={ task.id }
               task={ task }
               isEditing={ isEditing }
-              editTitle={ editTitle }
-              editDueDate={ editDueDate }
-              onEditChange={ (newTitle, newDueDate) => {
-                setEditTitle(newTitle);
-                setEditDueDate(newDueDate);
-              } }
+              editTaskData={ editTaskData }
+              onTaskDataEdit={ (field, value) => setEditTaskData({ ...editTaskData, [field]: value }) }
               onToggleComplete={ toggleCompleteTask }
               onSave={ handleUpdateTask }
               onCancel={ handleCancelTask }

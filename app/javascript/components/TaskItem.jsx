@@ -3,14 +3,13 @@ import React from "react";
 function TaskItem({
   task,
   isEditing,
-  editTitle,
-  editDueDate,
-  onEditChange,
+  editTaskData,
+  onTaskDataEdit,
   onToggleComplete,
   onSave,
   onCancel,
   onEdit,
-  onDelete
+  onDelete,
 }) {
   return (
     <li className="list-group-item d-flex justify-content-between align-items-center">
@@ -30,8 +29,8 @@ function TaskItem({
             <input
               type="text"
               className="form-control me-2 flex-grow-1"
-              value={ editTitle }
-              onChange={ (e) => onEditChange(e.target.value, editDueDate) }
+              value={ editTaskData.title }
+              onChange={ (e) => onTaskDataEdit("title", e.target.value) }
             />
           </>
         ) : (
@@ -43,8 +42,8 @@ function TaskItem({
         <input
           type="date"
           className="form-control due-date"
-          value={ isEditing ? editDueDate : task.due_date }
-          onChange={ (e) => onEditChange(editTitle, e.target.value) }
+          value={ isEditing ? editTaskData.dueDate : task.due_date }
+          onChange={ (e) => onTaskDataEdit("dueDate", e.target.value) }
           disabled={ !isEditing }
         />
       </div>
