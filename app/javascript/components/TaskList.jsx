@@ -25,39 +25,36 @@ function TaskList() {
     setEditTaskData({ title: "", dueDate: "" });
   }
 
-  function handleAddTask(e) {
-    e.preventDefault();
-    fetch("/tasks", {
-      method: "POST",
+  function performRequest(url, method, bodyData, callback) {
+    fetch(url, {
+      method: method,
       headers: {
         "Content-Type": "application/json",
         "X-CSRF-Token": csrfToken,
       },
-      body: JSON.stringify({ task: { title: addTaskData.title, due_date: addTaskData.dueDate } }),
+      body: bodyData ? JSON.stringify(bodyData) : null,
     })
       .then((response) => response.json())
       .then((updatedTasks) => {
         setTasks(updatedTasks);
-        setAddTaskData({ title: "", dueDate: "" });
-      });
+        if (callback) callback();
+      })
+      .catch((error) => console.error(`Error performing ${method} request:`, error));
+  }
+
+  function handleAddTask(e) {
+    e.preventDefault();
+    const bodyData = { task: { title: addTaskData.title, due_date: addTaskData.dueDate } };
+    performRequest("/tasks", "POST", bodyData, () => setAddTaskData({ title: "", dueDate: "" }));
   }
 
   function handleUpdateTask(e) {
     e.preventDefault();
-    fetch(`/tasks/${editTask.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": csrfToken,
-      },
-      body: JSON.stringify({ task: { title: editTaskData.title, due_date: editTaskData.dueDate } }),
-    })
-      .then((response) => response.json())
-      .then((updatedTasks) => {
-        setTasks(updatedTasks);
-        setEditTask(null);
-        setEditTaskData({ title: "", dueDate: "" });
-      });
+    const bodyData = { task: { title: editTaskData.title, due_date: editTaskData.dueDate } };
+    performRequest(`/tasks/${editTask.id}`, "PUT", bodyData, () => {
+      setEditTask(null);
+      setEditTaskData({ title: "", dueDate: "" });
+    });
   }
 
   function handleDeleteTask(taskId) {
@@ -74,18 +71,8 @@ function TaskList() {
   }
 
   function toggleCompleteTask(task) {
-    fetch(`/tasks/${task.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": csrfToken,
-      },
-      body: JSON.stringify({ task: { completed: !task.completed } }),
-    })
-      .then((response) => response.json())
-      .then((updatedTasks) => {
-        setTasks(updatedTasks);
-      });
+    const bodyData = { task: { completed: !task.completed } };
+    performRequest(`/tasks/${task.id}`, "PUT", bodyData, null);
   }
 
   return (
