@@ -5,9 +5,8 @@ import TaskForm from "./TaskForm";
 function TaskList() {
   const [tasks, setTasks] = useState([]);
   const [editTask, setEditTask] = useState(null);
-  const [addTitle, setAddTitle] = useState("");
+  const [addTaskData, setAddTaskData] = useState({ title: "", dueDate: "" });
   const [editTitle, setEditTitle] = useState("");
-  const [addDueDate, setAddDueDate] = useState("");
   const [editDueDate, setEditDueDate] = useState("");
   const csrfToken = document.querySelector("[name=csrf-token]").content;
 
@@ -25,13 +24,12 @@ function TaskList() {
         "Content-Type": "application/json",
         "X-CSRF-Token": csrfToken,
       },
-      body: JSON.stringify({ task: { title: addTitle, due_date: addDueDate } }),
+      body: JSON.stringify({ task: { title: addTaskData.title, due_date: addTaskData.dueDate } }),
     })
       .then((response) => response.json())
       .then((updatedTasks) => {
         setTasks(updatedTasks);
-        setAddTitle("");
-        setAddDueDate("");
+        setAddTaskData({ title: "", dueDate: "" });
       });
   }
 
@@ -99,10 +97,8 @@ function TaskList() {
       <h1 className="text-center">Task List</h1>
 
       <TaskForm
-        addTitle={ addTitle }
-        addDueDate={ addDueDate }
-        onTitleChange={ setAddTitle }
-        onDateChange={ setAddDueDate }
+        taskData={ addTaskData }
+        onTaskDataAdd={ (field, value) => setAddTaskData({ ...addTaskData, [field]: value }) }
         onAddTask={ handleAddTask }
       />
 
