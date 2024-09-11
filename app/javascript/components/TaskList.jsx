@@ -15,6 +15,16 @@ function TaskList() {
       .then((data) => setTasks(data));
   }, []);
 
+  function handleEditTask(task) {
+    setEditTask(task);
+    setEditTaskData({ title: task.title, dueDate: task.due_date });
+  }
+
+  function handleCancelTask() {
+    setEditTask(null);
+    setEditTaskData({ title: "", dueDate: "" });
+  }
+
   function handleAddTask(e) {
     e.preventDefault();
     fetch("/tasks", {
@@ -30,16 +40,6 @@ function TaskList() {
         setTasks(updatedTasks);
         setAddTaskData({ title: "", dueDate: "" });
       });
-  }
-
-  function handleEditTask(task) {
-    setEditTask(task);
-    setEditTaskData({ title: task.title, dueDate: task.due_date });
-  }
-
-  function handleCancelTask() {
-    setEditTask(null);
-    setEditTaskData({ title: "", dueDate: "" });
   }
 
   function handleUpdateTask(e) {
