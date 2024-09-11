@@ -7,6 +7,7 @@ function TaskList() {
   const [editTitle, setEditTitle] = useState("");
   const [addDueDate, setAddDueDate] = useState("");
   const [editDueDate, setEditDueDate] = useState("");
+  const csrfToken = document.querySelector("[name=csrf-token]").content;
 
   useEffect(() => {
     fetch("/tasks")
@@ -16,8 +17,6 @@ function TaskList() {
 
   function handleAddTask(e) {
     e.preventDefault();
-    const csrfToken = document.querySelector("[name=csrf-token]").content;
-
     fetch("/tasks", {
       method: "POST",
       headers: {
@@ -48,8 +47,6 @@ function TaskList() {
 
   function handleUpdateTask(e) {
     e.preventDefault();
-    const csrfToken = document.querySelector("[name=csrf-token]").content;
-
     fetch(`/tasks/${editTask.id}`, {
       method: "PUT",
       headers: {
@@ -68,8 +65,6 @@ function TaskList() {
   }
 
   function handleDeleteTask(taskId) {
-    const csrfToken = document.querySelector("[name=csrf-token]").content;
-
     fetch(`/tasks/${taskId}`, {
       method: "DELETE",
       headers: {
@@ -83,8 +78,6 @@ function TaskList() {
   }
 
   function toggleCompleteTask(task) {
-    const csrfToken = document.querySelector("[name=csrf-token]").content;
-
     fetch(`/tasks/${task.id}`, {
       method: "PUT",
       headers: {
