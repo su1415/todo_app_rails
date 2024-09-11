@@ -186,7 +186,7 @@ function TaskList() {
                         Edit
                       </button>
                       <button
-                        className="btn btn-dangerbtn btn-danger btn-sm fixed-width"
+                        className="btn btn-danger btn-sm fixed-width"
                         onClick={ () => handleDeleteTask(task.id) }>
                         Delete
                       </button>
