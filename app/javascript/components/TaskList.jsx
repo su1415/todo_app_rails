@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import TaskItem from "./TaskItem";
+import TaskForm from "./TaskForm";
 
 function TaskList() {
   const [tasks, setTasks] = useState([]);
@@ -87,8 +89,8 @@ function TaskList() {
       body: JSON.stringify({ task: { completed: !task.completed } }),
     })
       .then((response) => response.json())
-      .then((updatedTask) => {
-        setTasks(tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)));
+      .then((updatedTasks) => {
+        setTasks(updatedTasks);
       });
   }
 
@@ -96,106 +98,35 @@ function TaskList() {
     <div className="container mt-5">
       <h1 className="text-center">Task List</h1>
 
-      <div className="input-group mb-3">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Add Task"
-          value={ addTitle }
-          onChange={ (e) => setAddTitle(e.target.value) }
-        />
-        <input
-          type="date"
-          className="form-control"
-          value={ addDueDate }
-          onChange={ (e) => setAddDueDate(e.target.value) }
-        />
-        <button
-          className="btn btn-primary"
-          onClick={ handleAddTask }>
-          Add
-        </button>
-      </div>
+      <TaskForm
+        addTitle={ addTitle }
+        addDueDate={ addDueDate }
+        onTitleChange={ setAddTitle }
+        onDateChange={ setAddDueDate }
+        onAddTask={ handleAddTask }
+      />
 
       <ul className="list-group">
         { tasks.map((task) => {
           const isEditing = editTask && editTask.id === task.id;
 
           return (
-            <li key={ task.id } className="list-group-item d-flex justify-content-between align-items-center">
-
-              <div className="d-flex">
-                <input
-                  type="checkbox"
-                  className="me-2 custom-checkbox"
-                  checked={ task.completed }
-                  onChange={ () => toggleCompleteTask(task) }
-                  disabled={ isEditing }
-                />
-              </div>
-
-              <div className="d-flex align-items-center flex-grow-1">
-                { isEditing ? (
-                    <>
-                      <input
-                        type="text"
-                        className="form-control me-2 flex-grow-1"
-                        value={ editTitle }
-                        onChange={ (e) => setEditTitle(e.target.value) }
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <div className="d-flex align-items-center flex-grow-1">
-                        <span>{ task.title }</span>
-                      </div>
-                    </>
-                  )
-                }
-              </div>
-
-              <div className="d-flex">
-                <input
-                  type="date"
-                  className="form-control due-date"
-                  value={ isEditing ? editDueDate : task.due_date }
-                  onChange={ (e) => setEditDueDate(e.target.value) }
-                  disabled={ !isEditing }
-                />
-              </div>
-
-              <div className="d-flex align-items-center">
-                { isEditing ? (
-                    <>
-                      <button
-                        className="btn btn-success btn-sm me-2 fixed-width"
-                        onClick={ handleUpdateTask }>
-                        Save
-                      </button>
-                      <button
-                        className="btn btn-secondary btn-sm fixed-width"
-                        onClick={ handleCancelTask }>
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        className="btn btn-warning btn-sm me-2 fixed-width"
-                        onClick={ () => handleEditTask(task) }>
-                        Edit
-                      </button>
-                      <button
-                        className="btn btn-danger btn-sm fixed-width"
-                        onClick={ () => handleDeleteTask(task.id) }>
-                        Delete
-                      </button>
-                    </>
-                  )
-                }
-              </div>
-
-            </li>
+            <TaskItem
+              key={ task.id }
+              task={ task }
+              isEditing={ isEditing }
+              editTitle={ editTitle }
+              editDueDate={ editDueDate }
+              onEditChange={ (newTitle, newDueDate) => {
+                setEditTitle(newTitle);
+                setEditDueDate(newDueDate);
+              } }
+              onToggleComplete={ toggleCompleteTask }
+              onSave={ handleUpdateTask }
+              onCancel={ handleCancelTask }
+              onEdit={ handleEditTask }
+              onDelete={ handleDeleteTask }
+            />
           );
         })}
       </ul>
