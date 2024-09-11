@@ -28,7 +28,12 @@ function TaskList() {
     })
       .then((response) => response.json())
       .then((newTask) => {
-        setTasks([...tasks, newTask]);
+        const updatedTasks = [...tasks, newTask].sort((a, b) => {
+          if (!a.due_date) return 1;
+          if (!b.due_date) return -1;
+          return new Date(a.due_date) - new Date(b.due_date);
+        });
+        setTasks(updatedTasks);
         setAddTitle("");
         setAddDueDate("");
       });
@@ -60,9 +65,12 @@ function TaskList() {
     })
       .then((response) => response.json())
       .then((updatedTask) => {
-        setTasks(
-          tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
-        );
+        const updatedTasks = tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)).sort((a, b) => {
+          if (!a.due_date) return 1;
+          if (!b.due_date) return -1;
+          return new Date(a.due_date) - new Date(b.due_date);
+        });
+        setTasks(updatedTasks);
         setEditTask(null);
         setEditTitle("");
         setEditDueDate("");
