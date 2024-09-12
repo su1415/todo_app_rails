@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import TaskItem from "./TaskItem";
 import TaskForm from "./TaskForm";
 import TaskSearchForm from "./TaskSearchForm";
+import TaskFilterForm from "./TaskFilterForm";
 
 function TaskList() {
   const [tasks, setTasks] = useState([]);
@@ -10,6 +11,7 @@ function TaskList() {
   const [addTaskData, setAddTaskData] = useState({ title: "", dueDate: "" });
   const [editTaskData, setEditTaskData] = useState({ title: "", dueDate: "" });
   const [searchQuery, setSearchQuery] = useState("");
+  const [completedFilter, setCompletedFilter] = useState("all");
   const csrfToken = document.querySelector("[name=csrf-token]").content;
 
   useEffect(() => {
@@ -91,12 +93,17 @@ function TaskList() {
     performRequest(`/tasks/${task.id}`, "PUT", bodyData, null);
   }
 
-  function handleSearchTask(e) {
-    e.preventDefault();
-    fetch(`/tasks?search=${searchQuery}`)
+  function handleSearchTask() {
+    const completedParam = completedFilter === "all" ? "" : `&completed=${completedFilter === "completed"}`;
+    fetch(`/tasks?search=${searchQuery}${completedParam}`)
       .then((response) => response.json())
-      .then((data) => setTasks(data));
+      .then((data) => setTasks(data))
+      .catch((error) => console.error("Error fetching tasks:", error));
   }
+
+  useEffect(() => {
+    handleSearchTask();
+  }, [completedFilter]);
 
   return (
     <div className="container mt-5">
@@ -106,6 +113,11 @@ function TaskList() {
         taskData={ addTaskData }
         onTaskDataAdd={ (field, value) => setAddTaskData({ ...addTaskData, [field]: value }) }
         onAddTask={ handleAddTask }
+      />
+
+      <TaskFilterForm
+        completedFilter={ completedFilter }
+        onCompletedFilterSet={ (completedFilter) => setCompletedFilter(completedFilter) }
       />
 
       <TaskSearchForm

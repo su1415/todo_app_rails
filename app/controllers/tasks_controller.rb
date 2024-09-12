@@ -4,6 +4,9 @@ class TasksController < ApplicationController
     if params[:search].present?
       tasks = tasks.where("title LIKE ?", "%#{params[:search]}%")
     end
+    if params[:completed].present?
+      tasks = tasks.where(completed: ActiveModel::Type::Boolean.new.cast(params[:completed]))
+    end
     render json: tasks
   end
 
