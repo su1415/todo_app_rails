@@ -1,6 +1,9 @@
 class TasksController < ApplicationController
   def index
     tasks = Task.order_by_due_date
+    if params[:search].present?
+      tasks = tasks.where("title LIKE ?", "%#{params[:search]}%")
+    end
     render json: tasks
   end
 

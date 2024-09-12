@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import TaskItem from "./TaskItem";
 import TaskForm from "./TaskForm";
+import TaskSearchForm from "./TaskSearchForm";
 
 function TaskList() {
   const [tasks, setTasks] = useState([]);
@@ -8,6 +9,7 @@ function TaskList() {
   const [editTask, setEditTask] = useState(null);
   const [addTaskData, setAddTaskData] = useState({ title: "", dueDate: "" });
   const [editTaskData, setEditTaskData] = useState({ title: "", dueDate: "" });
+  const [searchQuery, setSearchQuery] = useState("");
   const csrfToken = document.querySelector("[name=csrf-token]").content;
 
   useEffect(() => {
@@ -89,6 +91,13 @@ function TaskList() {
     performRequest(`/tasks/${task.id}`, "PUT", bodyData, null);
   }
 
+  function handleSearchTask(e) {
+    e.preventDefault();
+    fetch(`/tasks?search=${searchQuery}`)
+      .then((response) => response.json())
+      .then((data) => setTasks(data));
+  }
+
   return (
     <div className="container mt-5">
       <h1 className="text-center">Task List</h1>
@@ -97,6 +106,12 @@ function TaskList() {
         taskData={ addTaskData }
         onTaskDataAdd={ (field, value) => setAddTaskData({ ...addTaskData, [field]: value }) }
         onAddTask={ handleAddTask }
+      />
+
+      <TaskSearchForm
+        searchQuery={ searchQuery }
+        onTaskSearchSet={ (searchQuery) => setSearchQuery(searchQuery) }
+        onSearchTask={ handleSearchTask }
       />
 
       { loading ? (
