@@ -1,12 +1,12 @@
 class TasksController < ApplicationController
   def index
-    tasks = Task.order_by_due_date
-    if params[:search].present?
-      tasks = tasks.where("title LIKE ?", "%#{params[:search]}%")
+    if params[:search] && !params[:search].nil?
+      session[:search] = params[:search]
     end
     if params[:completed].present?
-      tasks = tasks.where(completed: ActiveModel::Type::Boolean.new.cast(params[:completed]))
+      session[:completed] = params[:completed]
     end
+    tasks = filtered_tasks
     render json: tasks
   end
 
@@ -15,7 +15,7 @@ class TasksController < ApplicationController
     unless task.save
       return render json: task.errors, status: :unprocessable_entity
     end
-    tasks = Task.order_by_due_date
+    tasks = filtered_tasks
     render json: tasks, status: :created
   end
 
@@ -24,7 +24,7 @@ class TasksController < ApplicationController
     unless task.update(task_params)
       return render json: task.errors, status: :unprocessable_entity
     end
-    tasks = Task.order_by_due_date
+    tasks = filtered_tasks
     render json: tasks
   end
 
@@ -38,5 +38,21 @@ class TasksController < ApplicationController
 
   def task_params
     params.require(:task).permit(:title, :due_date, :completed)
+  end
+
+  def filtered_tasks
+    tasks = Task.order_by_due_date
+    if session[:search].present?
+      tasks = tasks.where("title LIKE ?", "%#{session[:search]}%")
+    end
+    if session[:completed].present?
+      if session[:completed] == "completed"
+        tasks = tasks.where(completed: true);
+      end
+      if session[:completed] == "incompleted"
+        tasks = tasks.where(completed: false);
+      end
+    end
+    tasks
   end
 end

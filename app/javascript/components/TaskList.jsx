@@ -94,8 +94,7 @@ function TaskList() {
   }
 
   function handleSearchTask() {
-    const completedParam = completedFilter === "all" ? "" : `&completed=${completedFilter === "completed"}`;
-    fetch(`/tasks?search=${searchQuery}${completedParam}`)
+    fetch(`/tasks?search=${searchQuery}&completed=${completedFilter}`)
       .then((response) => response.json())
       .then((data) => setTasks(data))
       .catch((error) => console.error("Error fetching tasks:", error));
