@@ -11,8 +11,10 @@ function TaskItem({
   onEdit,
   onDelete,
 }) {
+  const isOverdue = new Date(task.due_date) < new Date() && !task.completed;
+
   return (
-    <li className="list-group-item d-flex justify-content-between align-items-center">
+    <li className={`list-group-item d-flex justify-content-between align-items-center ${task.completed ? "completed" : ""} ${isOverdue ? "overdue" : ""}`}>
       <div className="d-flex">
         <input
           type="checkbox"
@@ -34,7 +36,9 @@ function TaskItem({
             />
           </>
         ) : (
-          <span>{ task.title }</span>
+          <span className={ task.completed ? "text-decoration-line-through" : "" }>
+            { task.title }
+          </span>
         ) }
       </div>
 
