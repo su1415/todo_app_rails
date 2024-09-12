@@ -4,6 +4,7 @@ import TaskForm from "./TaskForm";
 
 function TaskList() {
   const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editTask, setEditTask] = useState(null);
   const [addTaskData, setAddTaskData] = useState({ title: "", dueDate: "" });
   const [editTaskData, setEditTaskData] = useState({ title: "", dueDate: "" });
@@ -13,6 +14,19 @@ function TaskList() {
     fetch("/tasks")
       .then((response) => response.json())
       .then((data) => setTasks(data));
+  }, []);
+
+  useEffect(() => {
+    fetch("/tasks")
+      .then((response) => response.json())
+      .then((data) => {
+        setTasks(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching tasks:", error);
+        setLoading(false);
+      });
   }, []);
 
   function handleEditTask(task) {
@@ -85,26 +99,35 @@ function TaskList() {
         onAddTask={ handleAddTask }
       />
 
-      <ul className="list-group">
-        { tasks.map((task) => {
-          const isEditing = editTask && editTask.id === task.id;
-
-          return (
-            <TaskItem
-              key={ task.id }
-              task={ task }
-              isEditing={ isEditing }
-              editTaskData={ editTaskData }
-              onTaskDataEdit={ (field, value) => setEditTaskData({ ...editTaskData, [field]: value }) }
-              onToggleComplete={ toggleCompleteTask }
-              onSave={ handleUpdateTask }
-              onCancel={ handleCancelTask }
-              onEdit={ handleEditTask }
-              onDelete={ handleDeleteTask }
-            />
-          );
-        })}
-      </ul>
+      { loading ? (
+        <p>Loading tasks...</p>
+      ) : (
+        tasks.length === 0 ? (
+          <div className="alert alert-info text-center">
+            <p>該当するTaskがありません</p>
+          </div>
+        ) : (
+          <ul className="list-group">
+            { tasks.map((task) => {
+              const isEditing = editTask && editTask.id === task.id;
+              return (
+                <TaskItem
+                  key={ task.id }
+                  task={ task }
+                  isEditing={ isEditing }
+                  editTaskData={ editTaskData }
+                  onTaskDataEdit={ (field, value) => setEditTaskData({ ...editTaskData, [field]: value }) }
+                  onToggleComplete={ toggleCompleteTask }
+                  onSave={ handleUpdateTask }
+                  onCancel={ handleCancelTask }
+                  onEdit={ handleEditTask }
+                  onDelete={ handleDeleteTask }
+                />
+              );
+            })}
+          </ul>
+        )
+      ) }
     </div>
   );
 }
