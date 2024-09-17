@@ -1,24 +1,11 @@
-# README
+## 実装経緯
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+React, Rails の学習用に作成
 
-Things you may want to cover:
+## 機能詳細
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+* TODOの登録・削除・編集
+  * TODOは内容・期限を持つ
+* TODOの検索
+  * 未完了のみの表示も可能
+* 期限が本日以前、かつ、完了していないTODOに色を付ける
