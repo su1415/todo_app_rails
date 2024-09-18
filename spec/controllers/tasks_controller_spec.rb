@@ -153,6 +153,19 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    # TODO
+    let(:params) { { search: "test" } }
+    before { get :index, format: :json, params: params }
+    subject { patch :destroy, format: :json, params: { id: task_completed_test.id } }
+
+    context "削除が正常に完了" do
+      it "taskが削除されること" do
+        expect{ subject }.to change(Task, :count).by(-1)
+      end
+
+      it "HTTPステータスがno_contentであること" do
+        subject
+        expect(response).to have_http_status(:no_content)
+      end
+    end
   end
 end
