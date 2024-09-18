@@ -148,3 +148,75 @@ app\assets\builds\application.css.map
 ```
 yarn add bootstrap
 ```
+
+### バックエンド（Rails）テストの準備
+
+Gemfile
+```
+group :development, :test do
+  gem 'rspec-rails'
+  gem 'factory_bot_rails'
+end
+```
+
+```
+$ rails generate rspec:install
+      create  .rspec
+       exist  spec
+      create  spec/spec_helper.rb
+      create  spec/rails_helper.rb
+```
+
+spec/rails_helper.rb
+```
+RSpec.configure do |config|
+  config.include FactoryBot::Syntax::Methods
+end
+```
+
+### フロントエンド（React）テストの準備
+
+```
+$ yarn add --dev jest @testing-library/react @testing-library/jest-dom @babel/preset-env @babel/preset-react
+$ yarn add --dev jest-environment-jsdom
+$ yarn add --dev @testing-library/dom
+```
+
+jest.config.js
+```
+module.exports = {
+  testEnvironment: 'jsdom', // jsdomを使用してブラウザのような環境をシミュレート
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'], // setupファイルを指定
+  moduleFileExtensions: ['js', 'jsx'], // テスト対象の拡張子
+  transform: {
+    '^.+\\.jsx?$': 'babel-jest' // JSXをbabelでトランスパイル
+  },
+  testMatch: ['**/__tests__/**/*.js?(x)', '**/?(*.)+(spec|test).js?(x)'], // テストファイルのパターン
+};
+```
+
+.babelrc
+```
+{
+  "presets": ["@babel/preset-env", "@babel/preset-react"]
+}
+```
+
+jest.setup.js
+```
+import '@testing-library/jest-dom'; // Jest DOMのアサーションを使えるようにする
+```
+
+package.json
+```
+{
+  "scripts": {
+    "test": "jest"
+  }
+}
+```
+
+テストの実行
+```
+$ yarn test
+```
