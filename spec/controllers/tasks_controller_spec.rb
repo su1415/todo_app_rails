@@ -81,7 +81,39 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "POST #create" do
-    # TODO
+    let(:params) { { search: "test", completed: "incompleted" } }
+    let(:new_task) { { title: "test new task", due_date: Date.today } }
+    before { get :index, format: :json, params: params }
+    subject { post :create, format: :json, params: { task: new_task } }
+
+    context "登録が正常に完了" do
+      it "taskが登録されること" do
+        expect{ subject }.to change(Task, :count).by(1)
+      end
+
+      it "HTTPステータスがcreatedであること" do
+        subject
+        expect(response).to have_http_status(:created)
+      end
+
+      it "条件に一致したtasksが返ること" do
+        subject
+        json = JSON.parse(response.body)
+        expect(json.length).to eq(2)
+        expect(json.pluck("title")).to eq ["test new task", task_incompleted_test.title]
+      end
+    end
+
+    context "登録がエラーで中断" do
+      before do
+        allow_any_instance_of(Task).to receive(:save).and_return(false)
+      end
+
+      it "HTTPステータスがunprocessable_entityであること" do
+        subject
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
   end
 
   describe "PATCH/PUT #update" do
@@ -90,4 +122,5 @@ RSpec.describe TasksController, type: :controller do
 
   describe "DELETE #destroy" do
     # TODO
+  end
 end
