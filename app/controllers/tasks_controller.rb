@@ -7,7 +7,7 @@ class TasksController < ApplicationController
       session[:completed] = params[:completed]
     end
     tasks = filtered_tasks
-    render json: tasks
+    render_tasks_json(tasks)
   end
 
   def create
@@ -16,7 +16,7 @@ class TasksController < ApplicationController
       return render json: task.errors, status: :unprocessable_entity
     end
     tasks = filtered_tasks
-    render json: tasks, status: :created
+    render_tasks_json(tasks, status: :created)
   end
 
   def update
@@ -25,7 +25,7 @@ class TasksController < ApplicationController
       return render json: task.errors, status: :unprocessable_entity
     end
     tasks = filtered_tasks
-    render json: tasks
+    render_tasks_json(tasks)
   end
 
   def destroy
@@ -54,5 +54,13 @@ class TasksController < ApplicationController
       end
     end
     tasks
+  end
+
+  def render_tasks_json(tasks, status: :ok)
+    render json: {
+      tasks: tasks,
+      search_query: session[:search] || "",
+      completed_filter: session[:completed] || "all",
+    }, status: status
   end
 end

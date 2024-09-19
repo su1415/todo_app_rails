@@ -17,14 +17,10 @@ function TaskList() {
   useEffect(() => {
     fetch("/tasks")
       .then((response) => response.json())
-      .then((data) => setTasks(data));
-  }, []);
-
-  useEffect(() => {
-    fetch("/tasks")
-      .then((response) => response.json())
       .then((data) => {
-        setTasks(data);
+        setTasks(data.tasks);
+        setSearchQuery(data.search_query);
+        setCompletedFilter(data.completed_filter);
         setLoading(false);
       })
       .catch((error) => {
@@ -96,7 +92,7 @@ function TaskList() {
   function handleSearchTask() {
     fetch(`/tasks?search=${searchQuery}&completed=${completedFilter}`)
       .then((response) => response.json())
-      .then((data) => setTasks(data))
+      .then((data) => setTasks(data.tasks))
       .catch((error) => console.error("Error fetching tasks:", error));
   }
 
