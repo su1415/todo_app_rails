@@ -6,6 +6,7 @@ function TaskSearchForm({ searchQuery, onTaskSearchSet, onSearchTask }) {
       <input
         type="text"
         className="form-control"
+        data-testid="test-input-search"
         placeholder="Search tasks"
         value={ searchQuery }
         onChange={ (e) => onTaskSearchSet(e.target.value) }
