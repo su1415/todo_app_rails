@@ -6,6 +6,7 @@ function TaskForm({ taskData, onTaskDataAdd, onAddTask }) {
       <input
         type="text"
         className="form-control"
+        data-testid="test-input-title"
         placeholder="Add Task"
         value={ taskData.title }
         onChange={ (e) => onTaskDataAdd("title", e.target.value) }
@@ -13,6 +14,7 @@ function TaskForm({ taskData, onTaskDataAdd, onAddTask }) {
       <input
         type="date"
         className="form-control"
+        data-testid="test-input-due-date"
         value={ taskData.dueDate }
         onChange={ (e) => onTaskDataAdd("dueDate", e.target.value) }
       />
